@@ -1,34 +1,20 @@
-import 'package:sqflite/sqflite.dart';
-import 'package:path/path.dart';
+import 'package:sembast/sembast.dart';
+
+import 'database_factory.dart';
 
 class DatabaseHelper {
   static final DatabaseHelper instance = DatabaseHelper._internal();
+
   DatabaseHelper._internal();
 
   Database? _db;
 
-  Future<Database> get database async {
-    _db ??= await _initDb();
-    return _db!;
-  }
+  final StoreRef<int, Map<String, dynamic>> _store =
+      intMapStoreFactory.store('responses');
 
-  Future<Database> _initDb() async {
-    final path = join(await getDatabasesPath(), 'survey.db');
-    return openDatabase(
-      path,
-      version: 1,
-      onCreate: (db, version) {
-        return db.execute('''
-          CREATE TABLE responses (
-            id INTEGER PRIMARY KEY AUTOINCREMENT,
-            device_id TEXT NOT NULL,
-            answers TEXT NOT NULL,
-            answered_at TEXT NOT NULL,
-            synced INTEGER NOT NULL DEFAULT 0
-          )
-        ''');
-      },
-    );
+  Future<Database> get database async {
+    _db ??= await openSurveyDatabase();
+    return _db!;
   }
 
   Future<int> insertResponse({
@@ -37,7 +23,8 @@ class DatabaseHelper {
     required String answeredAt,
   }) async {
     final db = await database;
-    return db.insert('responses', {
+
+    return _store.add(db, {
       'device_id': deviceId,
       'answers': answersJson,
       'answered_at': answeredAt,
@@ -47,11 +34,29 @@ class DatabaseHelper {
 
   Future<List<Map<String, dynamic>>> getPendingResponses() async {
     final db = await database;
-    return db.query('responses', where: 'synced = 0');
+
+    final finder = Finder(
+      filter: Filter.equals('synced', 0),
+    );
+
+    final records = await _store.find(
+      db,
+      finder: finder,
+    );
+
+    return records.map((record) {
+      return {
+        'id': record.key,
+        ...record.value,
+      };
+    }).toList();
   }
 
   Future<void> markAsSynced(int id) async {
     final db = await database;
-    await db.update('responses', {'synced': 1}, where: 'id = ?', whereArgs: [id]);
+
+    await _store.record(id).update(db, {
+      'synced': 1,
+    });
   }
 }

@@ -21,7 +21,7 @@ class ThankYouScreen extends StatelessWidget {
               ),
               SizedBox(height: 8),
               Text(
-                'Sua opinião foi salva e será enviada assim que houver conexão com a internet.',
+                'Sua opinião foi salva',
                 textAlign: TextAlign.center,
               ),
             ],

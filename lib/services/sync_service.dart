@@ -4,7 +4,7 @@ import 'package:http/http.dart' as http;
 import 'database_helper.dart';
 
 class SyncService {
-  static const String _endpoint = 'http://127.0.0.1:8000/api/survey-responses';
+  static const String _endpoint = 'http://127.0.0.1:8080/api/survey-responses';
 
   final DatabaseHelper _db = DatabaseHelper.instance;
 
