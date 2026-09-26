@@ -2,7 +2,7 @@ import 'dart:convert';
 import 'package:http/http.dart' as http;
 
 class ResultsService {
-  static const String _endpoint = 'http://127.0.0.1:8080/api/survey-responses/summary';
+  static const String _endpoint = 'https://votus-form-api.onrender.com/api/survey-responses/summary';
 
   Future<Map<int, Map<String, int>>> fetchSummary() async {
     final response = await http.get(
