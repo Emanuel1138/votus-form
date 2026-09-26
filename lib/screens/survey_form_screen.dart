@@ -9,6 +9,7 @@ import '../models/question.dart';
 import '../services/database_helper.dart';
 import '../services/sync_service.dart';
 import 'thank_you_screen.dart';
+import '../widgets/votus_navigation.dart';
 
 class VotusColors {
   static const red = Color(0xFF8D0801);
@@ -162,13 +163,25 @@ class _SurveyFormScreenState extends State<SurveyFormScreen> {
                   padding: const EdgeInsets.only(
                     left: 20,
                     right: 20,
-                    bottom: 40,
+                    bottom: 110,
                   ),
                   sliver: SliverToBoxAdapter(
                     child: _buildSurvey(context),
                   ),
                 ),
               ],
+            ),
+
+            // Barra de navegação flutuante.
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 20,
+              child: Center(
+                child: VotusNavigation(
+                  currentPage: VotusPage.questions,
+                ),
+              ),
             ),
           ],
         ),
